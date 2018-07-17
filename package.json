@@ -1,0 +1,29 @@
+{
+  "name": "colonise-sevenzip",
+  "version": "0.1.0",
+  "description": "Simple module for running 7zip",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Colonise/SevenZip.git"
+  },
+  "keywords": [
+    "7zip",
+    "unzip",
+    "zip",
+    "archive"
+  ],
+  "author": "Patrick Stanford",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Colonise/SevenZip/issues"
+  },
+  "homepage": "https://github.com/Colonise/SevenZip#readme",
+  "devDependencies": {
+    "@types/node": "^10.5.2",
+    "typescript": "^2.9.2"
+  }
+}
