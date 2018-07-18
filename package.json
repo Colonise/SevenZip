@@ -2,7 +2,10 @@
     "name": "@colonise/sevenzip",
     "version": "0.1.0",
     "description": "Simple module for running 7zip",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "files": [
+        "dist/**/*.*"
+    ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
