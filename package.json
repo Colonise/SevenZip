@@ -4,6 +4,7 @@
     "description": "Simple module for running 7zip",
     "main": "dist/index.js",
     "files": [
+        "index.d.ts",
         "dist/**/*.*"
     ],
     "scripts": {
