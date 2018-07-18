@@ -34,6 +34,14 @@ export function extract(archive: string, fullPaths: boolean = false, args: Seven
     return exec(fullPaths ? SevenZipCommand.ExtractWithFullPaths : SevenZipCommand.Extract, archive, args);
 }
 
+export function extractSync(
+    archive: string,
+    fullPaths: boolean = false,
+    args: SevenZipArgument[] | SevenZipOptions = []
+) {
+    return execSync(fullPaths ? SevenZipCommand.ExtractWithFullPaths : SevenZipCommand.Extract, archive, args);
+}
+
 export function hash(archive: string, args: SevenZipArgument[] = []) {
     return exec(SevenZipCommand.Hash, archive, args);
 }
@@ -65,26 +73,58 @@ export function update(archive: string, args: SevenZipArgument[] = []) {
  *
  * @param command
  * @param archive
- * @param switches
  * @param args
  */
-export function exec(
+export function exec(command: SevenZipCommand, archive: string, args: SevenZipArgument[] | SevenZipOptions = []) {
+    return execute(false, command, archive, args);
+}
+
+/**
+ * Executes a 7zip command synchronously.
+ *
+ * Based off: https://sevenzip.osdn.jp/chm/cmdline/syntax.htm
+ *
+ * @param command
+ * @param archive
+ * @param args
+ */
+export function execSync(command: SevenZipCommand, archive: string, args: SevenZipArgument[] | SevenZipOptions = []) {
+    return execute(true, command, archive, args);
+}
+
+function execute(
+    sync: true,
+    command: SevenZipCommand,
+    archive: string,
+    args?: SevenZipArgument[] | SevenZipOptions
+): Buffer;
+function execute(
+    sync: false,
+    command: SevenZipCommand,
+    archive: string,
+    args?: SevenZipArgument[] | SevenZipOptions
+): child_process.ChildProcess;
+function execute(
+    sync: boolean = false,
     command: SevenZipCommand,
     archive: string,
     args: SevenZipArgument[] | SevenZipOptions = []
-    // switches: SevenZipSwitch[] = [],
 ) {
-    // const stringifySwitches = SevenZip.stringifySwitches(switches);
-
     if (!archive || !fs.existsSync(archive)) {
         throw new Error(`Cannot find file "${archive}"`);
     }
 
     const parsedArguments = Array.isArray(args) ? stringifyArguments(args) : parseOptions(args);
 
-    return child_process.execSync(`7za ${command} "${archive}" ${parsedArguments}`, {
-        cwd: sevenZipExecutableLocation
-    });
+    if (sync) {
+        return child_process.execSync(`7za ${command} "${archive}" ${parsedArguments} -y`, {
+            cwd: sevenZipExecutableLocation
+        });
+    } else {
+        return child_process.exec(`7za ${command} "${archive}" ${parsedArguments} -y`, {
+            cwd: sevenZipExecutableLocation
+        });
+    }
 }
 
 function stringifySwitch(sevenZipSwitch: SevenZipSwitch | SevenZipSwitchWithOption): string {
@@ -119,6 +159,11 @@ function parseOptions(options: SevenZipOptions): string {
             case 'overwriteMode':
                 sevenZipSwitch = <SevenZipOverwriteOption>option;
                 break;
+
+            case 'password':
+                if (option == null) {
+                    throw new Error(`Password cannot be ${option}`);
+                }
 
             default:
                 if (options[<keyof SevenZipOptions>key]) {
