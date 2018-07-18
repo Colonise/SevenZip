@@ -61,4 +61,6 @@ typings/
 .next
 
 # Dist
-dist
+*.js
+*.d.ts
+!./src/**/*.d.ts

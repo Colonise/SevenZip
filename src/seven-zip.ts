@@ -1,101 +1,8 @@
+import { SevenZipCommand } from './commands';
+import { SevenZipSwitch, SevenZipArgument, SevenZipOverwriteOption, SevenZipSwitchWithOption } from './switches';
 import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-
-/**
- * A 7zip command.
- *
- * Based off https://sevenzip.osdn.jp/chm/cmdline/commands/index.htm
- */
-export enum SevenZipCommand {
-    Add = 'a',
-    Benchmark = 'b',
-    Delete = 'd',
-    Extract = 'e',
-    Hash = 'h',
-    Information = 'i',
-    List = 'l',
-    Rename = 'rn',
-    Test = 't',
-    Update = 'u',
-    ExtractWithFullPaths = 'x'
-}
-
-/**
- * A 7zip switch.
- *
- * Based off https://sevenzip.osdn.jp/chm/cmdline/switches/index.htm
- */
-export enum SevenZipSwitchType {
-    StopSwitches = '--',
-    ShowDialog = '-ad',
-    IncludeArchiveFilenames = '-ai',
-    DisableArchiveNameParsing = '-an',
-    OverwriteMode = '-ao',
-    OverwriteModeOverwrite = '-aoa',
-    OverwriteModeSkip = '-aos',
-    OverwriteModeRenameExtracted = '-aou',
-    OverwriteModeRenameExisting = '-aot',
-    ExcludeArchiveFileNames = '-ax',
-    OutputLogLevel = '-bb',
-    OutputStream = '-bs',
-    ShowExecutionTimeStatistics = '-bt',
-    IncludeFileNames = '-i',
-    CompressionMethod = '-m',
-    OutputDirectory = '-o',
-    Password = '-p',
-    RecursiveSubdirectories = '-r',
-    ArchiveNameMode = '-sa',
-    ConsoleCharset = '-scc',
-    HashFunction = '-scrc',
-    ListFilesCharset = '-scs',
-    DeleteFilesAfterIncludingToArchive = '-sdel',
-    SendArchiveByEmail = '-seml',
-    CreateSFXArchive = '-sfx',
-    ReadDataFromStdIn = '-si',
-    LargePagesMode = '-slp',
-    ShowTechnicalInformation = '-slt',
-    StoreNTSecurityInformation = '-sni',
-    StoreNTFSAlternateStreams = '-sns',
-    ExtractFileAsAlternateStream = '-snr',
-    StoreHardLinksAsLinks = '-snh',
-    StoreSymbolicLinksAsLinks = '-snl',
-    WriteDataToStdOut = '-so',
-    DisableFileNameWildcardMatching = '-spd',
-    EliminateDuplicateRootFolder = '-spe',
-    FullyQualifiedFilePaths = '-spf',
-    SensitiveCaseMode = '-ssc',
-    CompressFilesOpenForWriting = '-ssw',
-    TimestampAsMostRecentModifiedFile = '-stl',
-    CPUThreadAffinityMask = '-stm',
-    ExcludeArchiveType = '-stx',
-    ArchiveType = '-t',
-    UpdateOptions = '-u',
-    CreateVolumes = '-v',
-    WorkingDirectory = '-w',
-    ExcludeFileNames = '-x',
-    AssumeYesOnAllQueries = '-y'
-}
-
-/**
- * A 7zip switch with an option.
- */
-export interface SevenZipSwitchWithOption {
-    type: SevenZipSwitchType;
-    option: string;
-}
-
-export type SevenZipWildcard = '*';
-export type SevenZipFileName = string;
-export type SevenZipListFile = string;
-export type SevenZipSwitch = SevenZipSwitchType | SevenZipSwitchWithOption;
-export type SevenZipArgument = SevenZipSwitch | SevenZipWildcard | SevenZipFileName | SevenZipListFile;
-
-export type SevenZipOverwriteOption =
-    | SevenZipSwitchType.OverwriteModeOverwrite
-    | SevenZipSwitchType.OverwriteModeRenameExisting
-    | SevenZipSwitchType.OverwriteModeRenameExtracted
-    | SevenZipSwitchType.OverwriteModeSkip;
 
 export interface SevenZipOptions {
     outputDirectory?: string;
@@ -106,9 +13,9 @@ export interface SevenZipOptions {
 export class SevenZip {
     public static sevenZipExecutableLocation: string = path.join(__dirname, '../');
 
-    private static readonly optionDictionary: { [key: string]: SevenZipSwitchType } = {
-        outputDirectory: SevenZipSwitchType.OutputDirectory,
-        password: SevenZipSwitchType.Password
+    private static readonly optionDictionary: { [key: string]: SevenZipSwitch } = {
+        outputDirectory: SevenZipSwitch.OutputDirectory,
+        password: SevenZipSwitch.Password
     };
 
     public static add(archive: string, args: SevenZipArgument[] = []) {
@@ -184,7 +91,7 @@ export class SevenZip {
         return child_process.execSync(`7za ${command} "${archive}" ${stringifyArguments}`);
     }
 
-    private static stringifySwitch(sevenZipSwitch: SevenZipSwitch): string {
+    private static stringifySwitch(sevenZipSwitch: SevenZipSwitch | SevenZipSwitchWithOption): string {
         return typeof sevenZipSwitch === 'string' ? sevenZipSwitch : `${sevenZipSwitch.type}"${sevenZipSwitch.option}"`;
     }
 
@@ -210,7 +117,7 @@ export class SevenZip {
         Object.keys(options).forEach(k => {
             const key: keyof SevenZipOptions = <keyof SevenZipOptions>k;
             const option = options[key];
-            let sevenZipSwitch: SevenZipSwitch | undefined;
+            let sevenZipSwitch: SevenZipSwitch | SevenZipSwitchWithOption | undefined;
 
             switch (key) {
                 case 'overwriteMode':
