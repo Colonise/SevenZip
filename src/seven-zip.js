@@ -138,7 +138,7 @@ var SevenZip = /** @class */ (function () {
         // const stringifySwitches = SevenZip.stringifySwitches(switches);
         if (args === void 0) { args = []; }
         if (!archive || !fs.existsSync(archive)) {
-            throw new Error("Cannot find file at \"" + archive + "\"");
+            throw new Error("Cannot find file \"" + archive + "\"");
         }
         var stringifyArguments = Array.isArray(args)
             ? SevenZip.stringifyArguments(args)
