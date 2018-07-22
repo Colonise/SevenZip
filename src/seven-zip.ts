@@ -1,8 +1,8 @@
-import { SevenZipCommand } from './commands';
-import { SevenZipSwitch, SevenZipArgument, SevenZipOverwriteOption, SevenZipSwitchWithOption } from './switches';
+import { path7za } from '7zip-bin';
 import * as child_process from 'child_process';
 import * as fs from 'fs';
-import * as path from 'path';
+import { SevenZipCommand } from './commands';
+import { SevenZipArgument, SevenZipOverwriteOption, SevenZipSwitch, SevenZipSwitchWithOption } from './switches';
 
 export interface SevenZipOptions {
     outputDirectory?: string;
@@ -10,7 +10,7 @@ export interface SevenZipOptions {
     overwriteMode?: SevenZipOverwriteOption;
 }
 
-export const sevenZipExecutableLocation: string = path.join(__dirname, '../');
+export const baseCommand: string = path7za;
 
 const optionDictionary: { [key: string]: SevenZipSwitch } = {
     outputDirectory: SevenZipSwitch.OutputDirectory,
@@ -117,13 +117,9 @@ function execute(
     const parsedArguments = Array.isArray(args) ? stringifyArguments(args) : parseOptions(args);
 
     if (sync) {
-        return child_process.execSync(`7za ${command} "${archive}" ${parsedArguments} -y`, {
-            cwd: sevenZipExecutableLocation
-        });
+        return child_process.execSync(`${baseCommand} ${command} "${archive}" ${parsedArguments} -y`);
     } else {
-        return child_process.exec(`7za ${command} "${archive}" ${parsedArguments} -y`, {
-            cwd: sevenZipExecutableLocation
-        });
+        return child_process.exec(`${baseCommand} ${command} "${archive}" ${parsedArguments} -y`);
     }
 }
 
@@ -131,13 +127,13 @@ function stringifySwitch(sevenZipSwitch: SevenZipSwitch | SevenZipSwitchWithOpti
     return typeof sevenZipSwitch === 'string' ? sevenZipSwitch : `${sevenZipSwitch.type}"${sevenZipSwitch.option}"`;
 }
 
-function stringifySwitches(switches: SevenZipSwitch[]): string {
-    const result: string[] = [];
+// function stringifySwitches(switches: SevenZipSwitch[]): string {
+//     const result: string[] = [];
 
-    switches.forEach(sevenZipSwitch => result.push(stringifySwitch(sevenZipSwitch)));
+//     switches.forEach(sevenZipSwitch => result.push(stringifySwitch(sevenZipSwitch)));
 
-    return result.join(' ');
-}
+//     return result.join(' ');
+// }
 
 function stringifyArguments(args: SevenZipArgument[]): string {
     const result: string[] = [];
