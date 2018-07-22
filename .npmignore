@@ -1,0 +1,11 @@
+# Test
+./integration-tests
+./test-assets
+
+# Source
+./src
+
+# Build
+./gulpfile.ts
+./tslint.json
+./tsconfig.json
