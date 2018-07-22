@@ -1,10 +1,10 @@
 import { Expect, SetupFixture, Teardown, TeardownFixture, Test, TestFixture } from 'alsatian';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as SevenZip from './seven-zip';
+import { extractSync } from './extract';
 
-@TestFixture('SevenZip Tests')
-export class SevenZipTests {
+@TestFixture('Extract Tests')
+export class ExtractTests {
     public outputFolderPath = '';
     public outputFilePath = '';
     public outputFileName = 'test.txt';
@@ -33,7 +33,7 @@ export class SevenZipTests {
 
     @Test('should extract empty zip')
     public extract1() {
-        SevenZip.extractSync('test-assets/empty.zip', true, {
+        extractSync('test-assets/empty.zip', {
             outputDirectory: this.outputFolderPath
         });
 
@@ -42,7 +42,7 @@ export class SevenZipTests {
 
     @Test('should extract zip contents')
     public extract2() {
-        SevenZip.extractSync('test-assets/no-password.zip', true, {
+        extractSync('test-assets/no-password.zip', {
             outputDirectory: this.outputFolderPath
         });
 
@@ -52,7 +52,7 @@ export class SevenZipTests {
 
     @Test('should extract password protected zip contents')
     public extract3() {
-        SevenZip.extractSync('test-assets/password.zip', true, {
+        extractSync('test-assets/password.zip', {
             outputDirectory: this.outputFolderPath,
             password: this.password
         });

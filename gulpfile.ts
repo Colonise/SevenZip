@@ -12,7 +12,11 @@ export class GulpFile {
     public readonly tsProject = typescript.createProject('./src/tsconfig.json');
     public tsLintProgram = TSlint.Linter.createProgram('./src/tsconfig.json');
 
-    public clean(): Promise<string[]> {
+    constructor() {
+        this.tsProject.config.exclude = ['**/*.spec.ts'];
+    }
+
+    public clean() {
         return del(<string>this.tsProject.options.outDir);
     }
 
@@ -25,12 +29,13 @@ export class GulpFile {
     }
 
     @TSGulp.Default()
-    @TSGulp.Dependencies('compile', 'lint', 'test-no-output', 'integration-test-no-output')
+    @TSGulp.Dependencies('compile', 'lint', 'test-no-output')
     // tslint:disable-next-line:no-empty
-    public all(): void {}
+    public all() {}
 
-    public lint(): void {
-        gulp.src('./src/**/*.ts')
+    public lint() {
+        this.tsProject
+            .src()
             .pipe(
                 GulpTSLint({
                     fix: true,
@@ -41,23 +46,13 @@ export class GulpFile {
             .pipe(GulpTSLint.report());
     }
 
-    public test(done: () => void): void {
-        this.runAlsatian('./src/**/*.spec.ts').then(() => done());
+    public test() {
+        this.runAlsatian('./src/**/*.spec.ts');
     }
 
     @TSGulp.Name('test-no-output')
-    public testNoOutput(done: () => void): void {
-        this.runAlsatian('./src/**/*.spec.ts', false).then(() => done());
-    }
-
-    @TSGulp.Name('integration-test')
-    public integrationTest(done: () => void): void {
-        this.runAlsatian('./integration-tests/*.spec.ts').then(() => done());
-    }
-
-    @TSGulp.Name('integration-test-no-output')
-    public integrationTestNoOutput(done: () => void): void {
-        this.runAlsatian('./integration-tests/*.spec.ts', false).then(() => done());
+    public testNoOutput() {
+        this.runAlsatian('./src/**/*.spec.ts', false);
     }
 
     public runAlsatian(tests: string, output: boolean = true): Promise<void> {
