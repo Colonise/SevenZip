@@ -1,3 +1,4 @@
+import { ChildProcess } from 'child_process';
 import { Command } from '../commands';
 import { Options } from '../options';
 import { Argument, Switch } from '../switches';
@@ -23,10 +24,10 @@ export type AddSwitches =
     | Switch.WorkingDirectory
     | Switch.Exclude;
 
-export function add(archive: string, args: Argument[] | Options = []) {
+export function add(archive: string, args: Argument[] | Options = []): ChildProcess {
     return exec(Command.Add, archive, args);
 }
 
-export function addSync(archive: string, args: Argument[] | Options = []) {
+export function addSync(archive: string, args: Argument[] | Options = []): Buffer {
     return execSync(Command.Add, archive, args);
 }

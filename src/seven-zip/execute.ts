@@ -21,7 +21,7 @@ const optionDictionary: { [key: string]: Switch } = {
  * @param archive
  * @param args
  */
-export function exec(command: Command, archive: string, args: Argument[] | Options = []) {
+export function exec(command: Command, archive: string, args: Argument[] | Options = []): child_process.ChildProcess {
     return execute(false, command, archive, args);
 }
 
@@ -34,7 +34,7 @@ export function exec(command: Command, archive: string, args: Argument[] | Optio
  * @param archive
  * @param args
  */
-export function execSync(command: Command, archive: string, args: Argument[] | Options = []) {
+export function execSync(command: Command, archive: string, args: Argument[] | Options = []): Buffer {
     return execute(true, command, archive, args);
 }
 
