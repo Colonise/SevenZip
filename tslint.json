@@ -14,6 +14,7 @@
         "quotemark": [true, "single"],
         "object-literal-key-quotes": false,
         "object-literal-sort-keys": false,
+        "no-duplicate-imports": true,
         "prefer-for-of": false,
         "trailing-comma": false,
         "whitespace": [

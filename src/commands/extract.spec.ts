@@ -7,14 +7,18 @@ import { extractSync } from './extract';
 export class ExtractTests {
     public outputFolderPath = '';
     public outputFilePath = '';
+    public outputFile2Path = '';
     public outputFileName = 'test.txt';
+    public outputFile2Name = 'test2.txt';
     public outputFileContents = 'test\r\n';
+    public outputFile2Contents = 'test2\r\n';
     public password = 'test';
 
     @SetupFixture
     public setupFixture() {
         this.outputFolderPath = fs.mkdtempSync('test-output');
         this.outputFilePath = path.join(this.outputFolderPath, this.outputFileName);
+        this.outputFile2Path = path.join(this.outputFolderPath, this.outputFile2Name);
     }
 
     @TeardownFixture
@@ -28,6 +32,10 @@ export class ExtractTests {
     public teardown() {
         if (fs.existsSync(this.outputFilePath)) {
             fs.unlinkSync(this.outputFilePath);
+        }
+
+        if (fs.existsSync(this.outputFile2Path)) {
+            fs.unlinkSync(this.outputFile2Path);
         }
     }
 
@@ -59,5 +67,17 @@ export class ExtractTests {
 
         Expect(fs.existsSync(this.outputFilePath)).toBe(true);
         Expect(fs.readFileSync(this.outputFilePath, { encoding: 'utf8' })).toBe(this.outputFileContents);
+    }
+
+    @Test('should extract multiple files from zip')
+    public extract4() {
+        extractSync('test-assets/multiple.zip', {
+            outputDirectory: this.outputFolderPath
+        });
+
+        Expect(fs.existsSync(this.outputFilePath)).toBe(true);
+        Expect(fs.readFileSync(this.outputFilePath, { encoding: 'utf8' })).toBe(this.outputFileContents);
+        Expect(fs.existsSync(this.outputFile2Path)).toBe(true);
+        Expect(fs.readFileSync(this.outputFile2Path, { encoding: 'utf8' })).toBe(this.outputFile2Contents);
     }
 }

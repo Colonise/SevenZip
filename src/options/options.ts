@@ -1,3 +1,4 @@
+import { ArchiveNameMode } from './archive-name-mode';
 import { FullyQualityFilePaths } from './fully-qualified-file-paths';
 import { LogLevel } from './log-level';
 import { Overwrite } from './overwrite';
@@ -46,7 +47,7 @@ export interface Options {
      *
      * More Information: https://sevenzip.osdn.jp/chm/cmdline/switches/ar_exclude.htm
      */
-    excludeArchives?: boolean;
+    excludeArchives?: string;
     /**
      * The switch sets output log level for Delete/Add/Update/Extract operations.
      *
@@ -114,7 +115,7 @@ export interface Options {
      *
      * More Information: https://sevenzip.osdn.jp/chm/cmdline/switches/sa.htm
      */
-    archiveNameMode?: string;
+    archiveNameMode?: ArchiveNameMode;
     /**
      * Set charset for for console input/output
      *
@@ -129,7 +130,7 @@ export interface Options {
      *
      * More Information: https://sevenzip.osdn.jp/chm/cmdline/switches/scrc.htm
      */
-    hashFunction?: 'CRC32' | 'CRC64' | 'SHA1' | 'SHA256' | 'BLAKE2sp' | '*';
+    hashFunction?: string;
     /**
      * Sets charset for list files.
      *
@@ -224,7 +225,7 @@ export interface Options {
      *
      * More Information: None
      */
-    wildcardMatching?: boolean;
+    disableWildcardMatching?: boolean;
     /**
      * Eliminate duplication of root folder for extract archive command
      *
@@ -282,7 +283,7 @@ export interface Options {
      *
      * More Information: https://sevenzip.osdn.jp/chm/cmdline/switches/update.htm
      */
-    updates?: string;
+    update?: string;
     /**
      * Specifies volume sizes.
      *
@@ -313,5 +314,5 @@ export interface Options {
      *
      * More Information: https://sevenzip.osdn.jp/chm/cmdline/switches/yes.htm
      */
-    queries?: boolean;
+    disableQueries?: boolean;
 }

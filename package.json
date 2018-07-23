@@ -8,8 +8,8 @@
         "dist/**/*.*"
     ],
     "scripts": {
-        "dist": "gulp compile",
-        "test": "gulp test && gulp integration-test"
+        "test": "gulp test",
+        "dist": "gulp compile"
     },
     "repository": {
         "type": "git",
@@ -40,10 +40,29 @@
         "tslint": "^5.10.0",
         "typescript": "^2.7.2"
     },
-    "peerDependencies": {
-        "@types/node": "^10.1.2"
-    },
     "dependencies": {
-        "7zip-bin": "^4.0.2"
+        "7zip-bin": "^4.0.2",
+        "tslib": "^1.9.3"
+    },
+    "nyc": {
+        "check-coverage": true,
+        "per-file": true,
+        "include": [
+            "build/**/*.js"
+        ],
+        "exclude": [
+            "build/**/*.spec.js",
+            "build/**/index.js"
+        ],
+        "reporter": [
+            "lcov",
+            "html"
+        ],
+        "require": [],
+        "extension": [
+            ".js"
+        ],
+        "cache": true,
+        "all": true
     }
 }
