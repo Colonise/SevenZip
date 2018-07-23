@@ -1,6 +1,6 @@
 {
     "name": "@colonise/sevenzip",
-    "version": "0.7.1",
+    "version": "0.8.0",
     "description": "Simple module for running 7zip",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
