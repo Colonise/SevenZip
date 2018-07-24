@@ -7,6 +7,7 @@ export * from './extract';
 export * from './hash';
 export * from './info';
 export * from './list';
+export * from './read';
 export * from './rename';
 export * from './test';
 export * from './update';
