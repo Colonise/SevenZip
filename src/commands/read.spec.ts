@@ -45,4 +45,14 @@ export class ExtractTests {
 
         Expect(contents.toString()).toBe(this.multipleOutputFileContents);
     }
+
+    @Test('should read a single file from from a zip containing multiple files')
+    public read5() {
+        const contents = readSync('test-assets/multiple.zip', {
+            password: this.password,
+            files: ['test.txt']
+        });
+
+        Expect(contents.toString()).toBe(this.outputFileContents);
+    }
 }

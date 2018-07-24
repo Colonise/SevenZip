@@ -6,6 +6,12 @@ import { Recurse } from './recurse';
 
 export interface Options {
     /**
+     * Specifies the wilcards, filenames or list-files to be included in the command.
+     *
+     * More Information: https://sevenzip.osdn.jp/chm/cmdline/syntax.htm
+     */
+    files?: string[];
+    /**
      * Disables switch parsing after "--" on the command line.
      * This is to allow 7-Zip to use file names that start with "-".
      *

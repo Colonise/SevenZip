@@ -4,6 +4,12 @@ import { Recurse } from './recurse';
 
 export interface ExtractOptions {
     /**
+     * Specifies the wilcards, filenames or list-files to be included in the command.
+     *
+     * More Information: https://sevenzip.osdn.jp/chm/cmdline/syntax.htm
+     */
+    files?: string[];
+    /**
      * Specifies additional include archive filenames and wildcards.
      * Multiple include switches are supported.
      *

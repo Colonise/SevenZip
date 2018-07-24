@@ -40,13 +40,11 @@ function execute(sync: boolean = false, command: Command, archive: string, optio
         throw new Error(`Cannot find file "${archive}"`);
     }
 
+    const files = options.files ? options.files.map(file => `"${file}"`) : '';
     const parsedArguments = parseOptions(options);
+    const fullCommand = `"${baseCommand}" ${command} "${archive}" ${files} ${parsedArguments} -y`;
 
-    if (sync) {
-        return child_process.execSync(`"${baseCommand}" ${command} "${archive}" ${parsedArguments} -y`);
-    } else {
-        return child_process.exec(`"${baseCommand}" ${command} "${archive}" ${parsedArguments} -y`);
-    }
+    return sync ? child_process.execSync(fullCommand) : child_process.exec(fullCommand);
 }
 
 function stringifySwitch(sevenZipSwitch: Switch | SwitchWithOption): string {
