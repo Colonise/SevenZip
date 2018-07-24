@@ -43,9 +43,9 @@ function execute(sync: boolean = false, command: Command, archive: string, optio
     const parsedArguments = parseOptions(options);
 
     if (sync) {
-        return child_process.execSync(`${baseCommand} ${command} "${archive}" ${parsedArguments} -y`);
+        return child_process.execSync(`"${baseCommand}" ${command} "${archive}" ${parsedArguments} -y`);
     } else {
-        return child_process.exec(`${baseCommand} ${command} "${archive}" ${parsedArguments} -y`);
+        return child_process.exec(`"${baseCommand}" ${command} "${archive}" ${parsedArguments} -y`);
     }
 }
 
