@@ -7,6 +7,19 @@ import { Command } from './command';
 
 const baseCommand: string = path7za;
 
+export enum Type {
+    Asynchronous,
+    Synchronous,
+    Promise
+}
+
+export type Callback = (error: Error | null, stdout: Buffer, stderr: Buffer) => void;
+
+export interface Result {
+    stdout: Buffer;
+    stderr: Buffer;
+}
+
 /**
  * Executes a 7zip command.
  *
@@ -16,8 +29,13 @@ const baseCommand: string = path7za;
  * @param archive
  * @param args
  */
-export function exec(command: Command, archive: string, options: Options = {}): child_process.ChildProcess {
-    return execute(false, command, archive, options);
+export function exec(
+    command: Command,
+    archive: string,
+    options: Options = {},
+    callback?: Callback
+): child_process.ChildProcess {
+    return execute(Type.Asynchronous, command, archive, options, callback);
 }
 
 /**
@@ -30,13 +48,35 @@ export function exec(command: Command, archive: string, options: Options = {}): 
  * @param args
  */
 export function execSync(command: Command, archive: string, options: Options = {}): Buffer {
-    return execute(true, command, archive, options);
+    return execute(Type.Synchronous, command, archive, options);
 }
 
-function execute(sync: true, command: Command, archive: string, options?: Options): Buffer;
-function execute(sync: false, command: Command, archive: string, options?: Options): child_process.ChildProcess;
-function execute(sync: boolean = false, command: Command, archive: string, options: Options = {}) {
-    if (!archive || !fs.existsSync(archive)) {
+/**
+ * Executes a 7zip command, returning a promise with the stdout.
+ *
+ * Based off: https://sevenzip.osdn.jp/chm/cmdline/syntax.htm
+ *
+ * @param command
+ * @param archive
+ * @param args
+ */
+export function execPromise(command: Command, archive: string, options: Options = {}): Promise<Result> {
+    return execute(Type.Promise, command, archive, options);
+}
+
+function execute(
+    type: Type.Asynchronous,
+    command: Command,
+    archive: string,
+    options?: Options,
+    callback?: Callback
+): child_process.ChildProcess;
+function execute(type: Type.Synchronous, command: Command, archive: string, options?: Options): Buffer;
+function execute(type: Type.Promise, command: Command, archive: string, options?: Options): Promise<Result>;
+function execute(type: Type, command: Command, archive: string, options: Options = {}, callback?: Callback) {
+    if (!archive) {
+        throw new Error(`Expected archive to be defined, but got "${archive}"`);
+    } else if (!fs.existsSync(archive)) {
         throw new Error(`Cannot find file "${archive}"`);
     }
 
@@ -44,7 +84,24 @@ function execute(sync: boolean = false, command: Command, archive: string, optio
     const parsedArguments = parseOptions(options);
     const fullCommand = `"${baseCommand}" ${command} "${archive}" ${files} ${parsedArguments} -y`;
 
-    return sync ? child_process.execSync(fullCommand) : child_process.exec(fullCommand);
+    switch (type) {
+        case Type.Asynchronous:
+            return child_process.exec(fullCommand, { encoding: 'buffer' }, callback);
+        case Type.Synchronous:
+            return child_process.execSync(fullCommand);
+        case Type.Promise:
+            return new Promise((resolve, reject) => {
+                child_process.exec(fullCommand, { encoding: 'buffer' }, (error, stdout, stderr) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(<Result>{ stdout, stderr });
+                    }
+                });
+            });
+        default:
+            throw new Error(`Unexpected ExecuteType ${type}`);
+    }
 }
 
 function stringifySwitch(sevenZipSwitch: Switch | SwitchWithOption): string {
