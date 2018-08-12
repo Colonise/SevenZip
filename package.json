@@ -38,7 +38,7 @@
         "gulp-typescript": "^4.0.2",
         "tsgulp": "^1.1.2",
         "tslint": "^5.10.0",
-        "typescript": "^2.7.2"
+        "typescript": "^3.0.1"
     },
     "dependencies": {
         "7zip-bin": "^4.0.2",
