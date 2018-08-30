@@ -86,16 +86,21 @@ function execute(type: Type, command: Command, archive: string, options: Options
 
     switch (type) {
         case Type.Asynchronous:
-            return child_process.exec(fullCommand, { encoding: 'buffer' }, callback);
+            return child_process.exec(fullCommand, { encoding: 'buffer', maxBuffer: 1073741823 }, callback);
         case Type.Synchronous:
-            return child_process.execSync(fullCommand);
+            return child_process.execSync(fullCommand, { encoding: 'buffer', maxBuffer: 1073741823 });
         case Type.Promise:
-            return new Promise((resolve, reject) => {
-                child_process.exec(fullCommand, { encoding: 'buffer' }, (error, stdout, stderr) => {
+            return new Promise(function(resolve, reject) {
+                // 1073741823 is the current max Buffer size allowed in Node, equals 1gb
+                child_process.exec(fullCommand, { encoding: 'buffer', maxBuffer: 1073741823 }, function(
+                    error,
+                    stdout,
+                    stderr
+                ) {
                     if (error) {
                         reject(error);
                     } else {
-                        resolve(<Result>{ stdout, stderr });
+                        resolve({ stdout: stdout, stderr: stderr });
                     }
                 });
             });
