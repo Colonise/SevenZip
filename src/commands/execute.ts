@@ -92,17 +92,17 @@ function execute(type: Type, command: Command, archive: string, options: Options
         case Type.Promise:
             return new Promise(function(resolve, reject) {
                 // 1073741823 is the current max Buffer size allowed in Node, equals 1gb
-                child_process.exec(fullCommand, { encoding: 'buffer', maxBuffer: 1073741823 }, function(
-                    error,
-                    stdout,
-                    stderr
-                ) {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve({ stdout: stdout, stderr: stderr });
+                child_process.exec(
+                    fullCommand,
+                    { encoding: 'buffer', maxBuffer: 1073741823 },
+                    (error, stdout, stderr) => {
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve({ stdout, stderr });
+                        }
                     }
-                });
+                );
             });
         default:
             throw new Error(`Unexpected ExecuteType ${type}`);
