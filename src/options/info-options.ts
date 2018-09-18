@@ -170,7 +170,7 @@ export interface InfoOptions {
      *
      * More Information: https://sevenzip.osdn.jp/chm/cmdline/switches/stdin.htm
      */
-    stdIn?: boolean;
+    stdIn?: string;
     /**
      * Enables Large Pages mode.
      *

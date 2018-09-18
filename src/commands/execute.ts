@@ -76,36 +76,36 @@ function execute(type: Type.Promise, command: Command, archive: string, options?
 function execute(type: Type, command: Command, archive: string, options: Options = {}, callback?: Callback) {
     if (!archive) {
         throw new Error(`Expected archive to be defined, but got "${archive}"`);
-    } else if (!fs.existsSync(archive)) {
+    } else if (command !== Command.Add && !fs.existsSync(archive)) {
         throw new Error(`Cannot find file "${archive}"`);
     }
 
     const files = options.files ? options.files.map(file => `"${file}"`) : '';
     const parsedArguments = parseOptions(options);
     const fullCommand = `"${baseCommand}" ${command} "${archive}" ${files} ${parsedArguments} -y`;
+    // 1073741823 is the current max Buffer size allowed in Node, equals 1gb
+    const maxBuffer = 1073741823;
 
     switch (type) {
         case Type.Asynchronous:
-            return child_process.exec(fullCommand, { encoding: 'buffer', maxBuffer: 1073741823 }, callback);
+            return child_process.exec(fullCommand, { encoding: 'buffer', maxBuffer }, callback);
+
         case Type.Synchronous:
-            return child_process.execSync(fullCommand, { encoding: 'buffer', maxBuffer: 1073741823 });
+            return child_process.execSync(fullCommand, { encoding: 'buffer', maxBuffer });
+
         case Type.Promise:
-            return new Promise(function(resolve, reject) {
-                // 1073741823 is the current max Buffer size allowed in Node, equals 1gb
-                child_process.exec(
-                    fullCommand,
-                    { encoding: 'buffer', maxBuffer: 1073741823 },
-                    (error, stdout, stderr) => {
-                        if (error) {
-                            reject(error);
-                        } else {
-                            resolve({ stdout, stderr });
-                        }
+            return new Promise((resolve, reject) => {
+                child_process.exec(fullCommand, { encoding: 'buffer', maxBuffer }, (error, stdout, stderr) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve({ stdout, stderr });
                     }
-                );
+                });
             });
+
         default:
-            throw new Error(`Unexpected ExecuteType ${type}`);
+            throw new Error(`Unexpected Execution Type "${type}"`);
     }
 }
 
@@ -123,6 +123,7 @@ const switchWithOptionDictionary: { [TKey in keyof Options]: Switch } = {
     consoleCharset: Switch.ConsoleCharset,
     hashFunction: Switch.HashFunction,
     listFilesCharset: Switch.ListFilesCharset,
+    stdIn: Switch.StdIn,
     storeNTSecurityInformation: Switch.StoreNTSecurityInformation,
     extractFileAsAlternateStream: Switch.ExtractFileAsAlternateStream,
     cpuThreadAffinityMask: Switch.CPUThreadAffinityMask,
@@ -143,7 +144,6 @@ const booleanSwitchDictionary: { [TKey in keyof Options]: Switch } = {
     deleteFilesAfterArchiving: Switch.DeleteFilesAfterArchiving,
     sendArchiveByEmail: Switch.SendArchiveByEmail,
     createSFX: Switch.CreateSFX,
-    stdIn: Switch.StdIn,
     showTechnicalInformation: Switch.ShowTechnicalInformation,
     storeNTSecurityInformation: Switch.StoreNTSecurityInformation,
     replaceColonInAlternateStream: Switch.ReplaceColonInAlternateStream,

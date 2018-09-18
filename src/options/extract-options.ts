@@ -76,7 +76,7 @@ export interface ExtractOptions {
      *
      * More Information: https://sevenzip.osdn.jp/chm/cmdline/switches/stdin.htm
      */
-    stdIn?: boolean;
+    stdIn?: string;
     /**
      * Use this switch to store and restore NT (NTFS) security information for files and directories.
      * Note that only NTFS file system supports that feature.

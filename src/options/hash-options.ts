@@ -40,7 +40,7 @@ export interface HashOptions {
      *
      * More Information: https://sevenzip.osdn.jp/chm/cmdline/switches/stdin.htm
      */
-    stdIn?: boolean;
+    stdIn?: string;
     /**
      * Store NTFS alternate streams mode.
      *
