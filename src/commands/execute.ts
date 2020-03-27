@@ -80,7 +80,7 @@ function execute(type: Type, command: Command, archive: string, options: Options
         throw new Error(`Cannot find file "${archive}"`);
     }
 
-    const files = options.files ? options.files.map(file => `"${file}"`) : '';
+    const files = options.files ? options.files.map(file => `"${file}"`).join(' ') : '';
     const parsedArguments = parseOptions(options);
     const fullCommand = `"${baseCommand}" ${command} "${archive}" ${files} ${parsedArguments} -y`;
     // 1073741823 is the current max Buffer size allowed in Node, equals 1gb
