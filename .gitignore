@@ -60,7 +60,9 @@ typings/
 # next.js build output
 .next
 
-# Dist
-*.js
-*.d.ts
-!./src/**/*.d.ts
+# Build
+build
+tsconfig.generated.json
+
+# Distribute
+distribute
