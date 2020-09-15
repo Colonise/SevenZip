@@ -36,6 +36,6 @@
     },
     "dependencies": {
         "7zip-bin": "^4.0.2",
-        "tslib": "^1.10.0"
+        "tslib": "^2.0.1"
     }
 }
